@@ -17,8 +17,6 @@
     left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
-    
-    
 }
 
 .yellowHeader{
@@ -48,8 +46,6 @@ h1{
     border: none;
     margin: 0px 30px  0 auto;
     background-color: white;
-    
-    
 }
 
 .sortButton:hover{
@@ -110,6 +106,7 @@ h1{
     margin: 10px 30px 10px auto;
     background-image:  url(images/clear-button.svg);
     background-color: white;
+    background-repeat: no-repeat;
 }
 
 .delete:hover{
