@@ -1,6 +1,5 @@
 let taskArray = [];
 let addButton = document.querySelector(".add-button");
-let taskplace2 = document.querySelector(".task-place2");
 let sortButton = document.querySelector(".sortButton");
 let createTemplateParent = document.querySelector(".task-wrapper");
 let flag = "down";
@@ -28,8 +27,8 @@ addButton.addEventListener("click", (event) => {
 //эта функция воводит на экран пустые ячейки, создаваемые впервые кнопкой добавить
 const createTemplate = () => {
     return (`
-    <div class = 'task-place'>
-          <input class = 'task-input' value = ""></input>
+    <div class = 'task-place' draggable="true">
+          <input class = 'task-input' value = "">
            <button class='delete'></button>
     </div>
    `);
@@ -38,8 +37,8 @@ const createTemplate = () => {
 //эта функция воводит на экран уже заполненные ячейки
 const createTemplate2 = (item) => {
     return (`
-    <div class = 'task-place'>
-          <input class = 'task-input' value = "${item}"></input>
+    <div class = 'task-place' draggable="true">
+          <input class = 'task-input' value = "${item}">
            <button class='delete'></button>
     </div>
    `);
@@ -56,11 +55,11 @@ const displayTasks = () => {
 };
 
 //забираем данные из инпутов и создаем из них массив:
-function createArray(){
+function createArray() {
     let elemArray = document.querySelectorAll('.task-input');
     taskArray = [];
-    elemArray.forEach((item) =>{
-    taskArray.push(item.value);
+    elemArray.forEach((item) => {
+        taskArray.push(item.value);
     });
     console.log(taskArray);
 }
@@ -109,7 +108,7 @@ sortButton.addEventListener("click", function (event) {
     if (flag == "down") {
         event.preventDefault();
         SortTasks();
-    } else if(flag == "up"){
+    } else if (flag == "up") {
         event.preventDefault();
         SortTasksReverse();
     }
@@ -123,5 +122,64 @@ document.addEventListener("click", event => {
         let deletedTask = deleteButton.previousElementSibling.value;
         taskArray = taskArray.filter(item => item !== deletedTask);
     }
- });
+});
 
+
+
+//drag-and-drop
+//делаем перемещаемый элемент прозрачным
+cardDoList.addEventListener(`dragstart`, (evt) => {
+    evt.target.classList.add(`selected`);
+})
+
+cardDoList.addEventListener(`dragend`, (evt) => {
+    evt.target.classList.remove(`selected`);
+});
+
+
+//реализуем логику перетаскивания
+cardDoList.addEventListener(`dragover`, (evt) => {
+    evt.preventDefault();
+
+    const activeElement = cardDoList.querySelector(`.selected`);
+    const currentElement = evt.target;
+    const isMoveable = activeElement !== currentElement &&
+        currentElement.classList.contains(`task-place`);
+
+    if (!isMoveable) {
+        return;
+    }
+
+    //evt.clientY — вертикальная координата курсора в момент,
+    // когда сработало событие
+    const nextElement = getNextElement(evt.clientY, currentElement);
+
+    // Проверяем, нужно ли менять элементы местами
+    if (
+        nextElement &&
+        activeElement === nextElement.previousElementSibling ||
+        activeElement === nextElement
+    ) {
+        // Если нет, выходим из функции, чтобы избежать лишних изменений в DOM
+        return;
+    }
+
+    cardDoList.insertBefore(activeElement, nextElement);
+});
+
+
+//учитываем положение курсора относительно центра
+const getNextElement = (cursorPosition, currentElement) => {
+    // Получаем объект с размерами и координатами
+    const currentElementCoord = currentElement.getBoundingClientRect();
+    // Находим вертикальную координату центра текущего элемента
+    const currentElementCenter = currentElementCoord.y + currentElementCoord.height / 2;
+
+    // Если курсор выше центра элемента, возвращаем текущий элемент
+    // В ином случае — следующий DOM-элемент
+    const nextElement = (cursorPosition < currentElementCenter) ?
+        currentElement :
+        currentElement.nextElementSibling;
+
+    return nextElement;
+};

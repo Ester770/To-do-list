@@ -88,6 +88,7 @@ h1{
     /* border-radius: 5px;
     border: 1px solid #C4C4C4; */
     border: none;
+    outline: none;
 }
 
 .task-text{
@@ -125,3 +126,7 @@ h1{
 .add-button:hover{
     background-image:  url(images/add-light.svg);
 }
+
+.selected {
+    opacity: 0.6;
+  }
